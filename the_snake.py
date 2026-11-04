@@ -5,7 +5,9 @@ import pygame
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
 GRID_SIZE = 20
+# Количество клеток по ширине поля:
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
+# Количество клеток по высоте поля:
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
 # Направления движения:
@@ -28,7 +30,6 @@ SNAKE_COLOR = (0, 255, 0)
 
 # Скорость движения змейки:
 SPEED = 20
-
 # Настройка игрового окна:
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
@@ -40,7 +41,75 @@ clock = pygame.time.Clock()
 
 
 # Тут опишите все классы игры.
-...
+class GameObject:
+    '''Основной класс игры'''
+    def __init__(self, body_color):
+        # position — позиция объекта на игровом поле;
+        # body_color — цвет объекта
+        self.position = (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)  # центр экрана
+        self.body_color = body_color
+
+    def draw(self):
+        pass
+
+
+class Apple(GameObject):
+    def __init__(self, body_color):
+        super().__init__(body_color)
+        self.body_color = APPLE_COLOR
+
+    def randomize_position(self):
+        x_idx = random.randint(0, GRID_WIDTH - 1)  # Индекс клетки по x
+        y_idx = random.randint(0, GRID_HEIGHT - 1)  # Индекс клетки по y
+        x = x_idx * GRID_SIZE + GRID_SIZE // 2
+        y = y_idx * GRID_SIZE + GRID_SIZE // 2
+        self.position = (x, y)
+
+    def draw(self):
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, self.body_color, rect)
+        pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class Snake(GameObject):
+    def __init__(self, body_color):
+        super().__init__(body_color)
+        self.length = 1
+        self.next_direction = None
+        self.body_color = SNAKE_COLOR
+        self.position = [self.position]
+        self.direction = RIGHT
+        self.last = None
+
+    def get_head_position(self):
+        return self.position[0]
+
+
+def move(self):
+    """FJNC"""
+    if self.next_direction is not None:
+        self.direction = self.next_direction
+        self.next_direction = None
+
+    head = self.get_head_position()
+    x, y = head  # Запомнили в переменные координаты головы змейки
+
+    # Смена координат в зависимости от направления
+    if self.direction == 'UP':
+        new_pos = (x, y - GRID_SIZE)
+    elif self.direction == 'DOWN':
+        new_pos = (x, y + GRID_SIZE)
+    elif self.direction == 'LEFT':
+        new_pos = (x - GRID_SIZE, y)
+    elif self.direction == 'RIGHT':
+        new_pos = (x + GRID_SIZE, y)
+    else:
+        new_pos = head  # Без изменений, если направление не задано
+
+    self.positions.insert(0, new_pos)
+
+    # Удаляем хвост, если длина списка больше текущей длины змейки
+    self.last = self.positions.pop()
 
 
 def main():
@@ -59,12 +128,6 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-# Метод draw класса Apple
-# def draw(self):
-#     rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
-#     pygame.draw.rect(screen, self.body_color, rect)
-#     pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 # # Метод draw класса Snake
 # def draw(self):
