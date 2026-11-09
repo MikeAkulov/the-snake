@@ -58,7 +58,8 @@ class GameObject:
 
     def draw(self):
         """Метод заглушки, далее в методе рисуем объекты"""
-        raise NotImplementedError('Метод draw не реализован в экземплярах')
+        raise NotImplementedError('Метод draw не реализован '
+                                  f'в {self.__class__.__name__}')
 
 
 class Apple(GameObject):
@@ -68,8 +69,7 @@ class Apple(GameObject):
                  occupied_position=None):
         """Инициализируем начальные данные по объекту"""
         super().__init__(body_color=body_color, position=position)
-        if occupied_position is None:
-            occupied_position = []
+        occupied_position = occupied_position or []
         self.randomize_position(occupied_position)
 
     # Добавим параметр (список занятых ячеек)
@@ -96,10 +96,11 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс описывает объект змейка"""
 
-    def __init__(self, body_color=SNAKE_COLOR, position=None):
+    def __init__(self, body_color=SNAKE_COLOR, position=MID):
         """Инициализируем начальные данные по объекту"""
         super().__init__(body_color=body_color, position=position)
         self.reset()
+        self.direction = RIGHT
 
     def get_head_position(self):
         """Получаем значение положения головы"""
@@ -133,10 +134,9 @@ class Snake(GameObject):
 
     def draw(self):
         """Отображаем экземпляр в игре"""
-        for position in self.positions:
-            rect = (pg.Rect(position, (GRID_SIZE, GRID_SIZE)))
-            pg.draw.rect(screen, self.body_color, rect)
-            pg.draw.rect(screen, BORDER_COLOR, rect, 1)
+        rect = (pg.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE)))
+        pg.draw.rect(screen, self.body_color, rect)
+        pg.draw.rect(screen, BORDER_COLOR, rect, 1)
 
         # Затирание последнего сегмента, закрашиваем клетку черным
         if self.last:
@@ -146,7 +146,6 @@ class Snake(GameObject):
     def reset(self):
         """Сброс змейки в начальное состояние при столкновении"""
         self.length = 1
-        self.position = MID
         self.positions = [self.position]
         # Задаем движение змейки в неизвестном напрлавлении
         self.direction = choice(choice_direction)
